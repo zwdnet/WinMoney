@@ -1,0 +1,44 @@
+# depslib dependency file v1.0
+1349406278 source:c:\users\administrator\code\winmoney\datadeal.cpp
+	"datadeal.h"
+	"pubfun.h"
+
+1349406323 c:\users\administrator\code\winmoney\datadeal.h
+	<iostream>
+	<sstream>
+	<string>
+	<sqlite3.h>
+	"database.h"
+
+1346689017 c:\mylib\sqlite3\sqlite3.h
+	<stdarg.h>
+
+1349406336 c:\users\administrator\code\winmoney\database.h
+	<sqlite3.h>
+	<unistd.h>
+	<cstdio>
+	<cstdlib>
+	<iostream>
+
+1349406301 c:\users\administrator\code\winmoney\pubfun.h
+	<iostream>
+	<string>
+
+1349406289 source:c:\users\administrator\code\winmoney\main.cpp
+	<iostream>
+	"database.h"
+	"datadeal.h"
+	"tools.h"
+
+1349416492 c:\users\administrator\code\winmoney\tools.h
+	<iostream>
+	<string>
+	<limits>
+	<cmath>
+	"pubfun.h"
+	"database.h"
+	"datadeal.h"
+
+1349416509 source:c:\users\administrator\code\winmoney\database.cpp
+	"database.h"
+
