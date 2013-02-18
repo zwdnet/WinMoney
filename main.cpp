@@ -17,7 +17,7 @@ int main()
 {
 	DataBase money; //数据库类
 	int input = 0;
-	while (input != 17)
+	while (input != 18)
 	{
 		input = getInput();
 		switch (input)
@@ -70,6 +70,9 @@ int main()
 		case 16:
 			outputDatabaseState(); //输出当前数据库存储的记录总数
 			break;
+        case 17:
+            yearStatics(); //输出年度统计信息
+            break;
 		default:
 			break;
 		}

@@ -12,6 +12,9 @@
 #include <string>
 #include <limits>
 #include <cmath>
+#include <vector>
+#include <map>
+#include <iterator>
 #include "pubfun.h"
 #include "database.h"
 #include "datadeal.h"
@@ -54,10 +57,11 @@ int getInput(void)
 		    <<"14.输出指定日期范围的资产负债表.................."<<endl
 		    <<"15.分析指定日期范围内的财务状况.................."<<endl
 		    <<"16.输出当前数据库中存储的记录的总数.............."<<endl
-		    <<"17.退出.........................................."<<endl;
+		    <<"17.输出年度财务统计信息.........................."<<endl
+		    <<"18.退出.........................................."<<endl;
 		cout<<"欢迎使用!请按提示输入选择:";
 		cin>>input;
-		if (input >= 1 && input <= 17)
+		if (input >= 1 && input <= 18)
 		{
 			break;
 		}
@@ -824,6 +828,35 @@ void outputBalanceSheet(void)
 	cin.get();
 }
 
+//输出恩格尔系数分析结果
+void EngelAnalysis(float Engel)
+{
+    if (Engel > 0.6)
+	{
+		cout<<"您目前的生活水平处于贫穷状态。"<<endl;
+	}
+	else if (Engel <= 0.6 && Engel > 0.5)
+	{
+		cout<<"您目前的生活水平处于温饱状态。"<<endl;
+	}
+	else if (Engel <= 0.5 && Engel > 0.4)
+	{
+		cout<<"您目前的生活水平处于小康状态。"<<endl;
+	}
+	else if (Engel <= 0.4 && Engel > 0.3)
+	{
+		cout<<"您目前的生活水平处于相对富裕状态。"<<endl;
+	}
+	else if (Engel <= 0.3 && Engel > 0.2)
+	{
+		cout<<"您目前的生活水平处于富裕状态。"<<endl;
+	}
+	else
+	{
+		cout<<"您目前的生活水平处于极其富裕状态。"<<endl;
+	}
+}
+
 /*分析指定日期范围的财务状况
   所有数据的计算方法和数据解释均来自于《个人理财教程》，张颖著，2007年3月北京第一版，对外经济贸易大学出版社*/
 void analysisState(void)
@@ -875,30 +908,7 @@ void analysisState(void)
 	float Engel = SumFoodExpense/SumExpense; //计算恩格尔系数
 	cout<<"您在本时间段内的恩格尔系数为:"<<Engel<<",";
 	//输出恩格尔系数分析结果
-	if (Engel > 0.6)
-	{
-		cout<<"您目前的生活水平处于贫穷状态。"<<endl;
-	}
-	else if (Engel <= 0.6 && Engel > 0.5)
-	{
-		cout<<"您目前的生活水平处于温饱状态。"<<endl;
-	}
-	else if (Engel <= 0.5 && Engel > 0.4)
-	{
-		cout<<"您目前的生活水平处于小康状态。"<<endl;
-	}
-	else if (Engel <= 0.4 && Engel > 0.3)
-	{
-		cout<<"您目前的生活水平处于相对富裕状态。"<<endl;
-	}
-	else if (Engel <= 0.3 && Engel > 0.2)
-	{
-		cout<<"您目前的生活水平处于富裕状态。"<<endl;
-	}
-	else
-	{
-		cout<<"您目前的生活水平处于极其富裕状态。"<<endl;
-	}
+	EngelAnalysis(Engel);
 	cout<<line<<endl;
 	//资产负债分析
 	float TotalInvestment, TotalDebt;
@@ -1026,5 +1036,193 @@ void outputDatabaseState(void)
 	cout<<"查询完毕，按任意键继续......"<<endl;
 	cin.get();
 	cin.get();
+}
+
+//计算给定数组的标准差
+template <typename T>
+float stdData(const vector<T> & data)
+{
+    double n = data.size();
+    double sum = 0.0, mean = 0.0, std = 0.0;
+    //计算平均数
+    for (int i = 0; i < n; i++)
+    {
+        sum += data[i];
+    }
+    mean = sum/n;
+    //计算标准差
+    sum = 0.0;
+    for (int i = 0; i < n; i++)
+    {
+        sum += (data[i] - mean)*(data[i] - mean);
+    }
+    std = sqrt(sum/(n-1.0)); //这里因为是样本数据，所以除以n-1而不是n
+    return std;
+}
+
+//分析指定年度的信息
+void yearAnalysis(int year)
+{
+    Income IncomeData;
+    //获取数据库中的收入支出类型代码
+    string sql = "SELECT TypeID from IncomeType";
+	QueryResult res;
+	DataBase database;
+	database.runSQL(sql, res);
+	//vector<string> TypeName;
+	map<int, string> TypeName;
+	for (int i = 1; i < res.row+1; i++)
+	{
+		//取得类型名称
+		int TypeID = str2int(res.result[i]);
+		string temp = IncomeData.getTypeName(TypeID);
+		TypeName.insert(map<int, string>::value_type(TypeID, temp));
+	}
+    /*获取指定年度内每个月的总收入和支出，以及每个分类里面的收入支出。
+      如果某个月份内没有记录，说明记录不全，输出错误。*/
+    //每月最后一天的数值，闰年在后面处理。
+    int date[12] = {131, 228, 331, 430, 531, 630, 731, 831, 930, 1031, 1130, 1231};
+    //二月份的日期，特别处理闰年。
+    //普通年闰年：前2个条件
+    //世纪年闰年：后2个条件
+    if ((year % 4 == 0 && year % 100 != 0) ||
+        (year % 100 == 0 && year % 400 == 0))
+    {
+        date[1] = 229;
+    }
+    else
+    {
+        date[1] = 228;
+    }
+    vector<float> IncomeSum; //每个月的总收入
+    vector<float> ExpenseSum; //每个月的总支出
+    vector<float> Sum; //每个月的净收入
+    int TypeNum = TypeName.size(); //收入支出类型的数量
+    vector<float> TypeSum(TypeNum, 0.0); //每类收入支出类型的年度总量
+    float TotalIncome = 0.0, TotalExpense = 0.0; //年度的收入支出总额
+    for (int i = 1; i <= 12; i++)
+    {
+        //生成查询的日期
+        int beginTime = 0, endTime = 0;
+
+        beginTime = year*10000 + i*100+1;
+        endTime = year*10000 + date[i-1];
+        //进行查询
+        float tempIncomeSum = IncomeData.getSumIncome(beginTime, endTime);
+        //支出在记录里是负数，这里转换成正数。
+        float tempExpenseSum = -1.0*IncomeData.getSumExpense(beginTime, endTime);
+        float tempSum = IncomeData.getSum(beginTime, endTime);
+        //若收入支出均为0，说明本月没记录，输出错误信息，退出。
+        if (tempIncomeSum == 0 && tempExpenseSum == 0)
+        {
+            cout<<"您在本月"<<i<<"月无任何记录，不能进行本年度财务信息统计，按任意键返回......"<<endl;
+            cin.get();
+            return;
+        }
+        IncomeSum.push_back(tempIncomeSum);
+        ExpenseSum.push_back(tempExpenseSum);
+        Sum.push_back(tempSum);
+        TotalIncome += tempIncomeSum;
+        TotalExpense += tempExpenseSum;
+        //按项目类型检索
+        map<int, string>::iterator iter;
+        int j = 0;
+        for (iter = TypeName.begin(); iter != TypeName.end(); iter++)
+        {
+            float num = 0.0;
+            num += IncomeData.getSumByType(beginTime,
+                                                  endTime,
+                                                  iter->first);
+            if (num < 0)
+            {
+                 num = -1.0*num;
+            }
+            TypeSum[j] += num;
+            j++;
+        }
+    }
+
+    //计算相关数据
+    //1.平均月收入，月支出，月余额。
+    float meanIncome = TotalIncome/12.0;
+    float meanExpense = TotalExpense/12.0;
+    float meanBalance = (TotalIncome - TotalExpense)/12.0;
+    //2.计算三个数值的标准差。
+    float stdIncome, stdExpense, stdBalance;
+    stdIncome = stdData(IncomeSum);
+    stdExpense = stdData(ExpenseSum);
+    vector<float> BalanceSum(12);
+    for (int i = 0; i < 12; i++)
+    {
+        BalanceSum[i] = IncomeSum[i] - ExpenseSum[i];
+    }
+    stdBalance = stdData(BalanceSum);
+    //3.计算统计数据。
+    //恩格尔系数，食品消费除以总支出。
+    float engel = TypeSum[1]/TotalIncome;
+    //个人通货膨胀率，用下半年支出比上半年增长的比率来衡量
+    float cpi = 0.0;
+    float firstExpense = ExpenseSum[0] + ExpenseSum[1] + ExpenseSum[2]
+                      + ExpenseSum[3] + ExpenseSum[4] + ExpenseSum[5];
+    float secondExpense = ExpenseSum[6] + ExpenseSum[7] + ExpenseSum[8]
+                      + ExpenseSum[9] + ExpenseSum[10] + ExpenseSum[11];
+    cpi = 100.0*((secondExpense - firstExpense)/firstExpense);
+    //收入增长率，算法同CPI
+    float IncomeIncrease = 0.0;
+    float firstHalf = IncomeSum[0] + IncomeSum[1] + IncomeSum[2]
+                      + IncomeSum[3] + IncomeSum[4] + IncomeSum[5];
+    float secondHalf = IncomeSum[6] + IncomeSum[7] + IncomeSum[8]
+                      + IncomeSum[9] + IncomeSum[10] + IncomeSum[11];
+    IncomeIncrease = 100*((secondHalf - firstHalf)/firstHalf);
+    //输出信息
+    cout<<"您在"<<year<<"年的各月收入支出信息为:"<<endl;
+    cout<<"------------按月分列--------------------"<<endl;
+    for (int i = 0; i < 12; i++)
+    {
+        cout<<"第"<<i+1<<"月:总收入="<<IncomeSum[i]<<",总支出="<<ExpenseSum[i]
+                  <<",收入-支出="<<Sum[i]<<endl;
+    }
+    cout<<"------------年度信息--------------------"<<endl;
+    cout<<"年度总收入="<<TotalIncome<<endl;
+    cout<<"年度总支出="<<TotalExpense<<endl;
+    cout<<"年度收入-支出="<<TotalIncome-TotalExpense<<endl;
+    cout<<"------------分类统计信息----------------"<<endl;
+    int i = 0;
+    map<int, string>::iterator iter;
+    for (iter = TypeName.begin(); iter != TypeName.end(); iter++)
+    {
+        cout<<iter->second<<"金额 = "<<TypeSum[i]<<endl;
+        i++;
+    }
+    cout<<"------------相关统计数据----------------"<<endl;
+    cout<<"月平均收入="<<meanIncome<<" 月平均支出="<<meanExpense<<" 月均结余="<<meanBalance<<endl;
+    cout<<"月收入标准差="<<stdIncome<<" 月支出标准差="<<stdExpense
+        <<" 月余额标准差="<<stdBalance<<endl;
+    cout<<"您本年度的恩格尔系数为:"<<engel<<endl;
+    EngelAnalysis(engel);
+    cout<<"您本年度个人通货膨胀率为:"<<cpi<<"%"<<endl;
+    cout<<"您本年度的个人收入增长率为:"<<IncomeIncrease<<"%"<<endl;
+    cin.get();
+}
+
+//输出指定年度的财务统计信息
+void yearStatics()
+{
+    system("cls");
+    cout<<"请输入要统计的年度(四位数,格式YYYY):";
+    int year=0;
+    cin>>year;
+    if (year <= 2010 || year > 9999) //程序是2011年写的，记录时间不可能比这还早
+    {
+        cout<<"无次年份记录或者输入错误！";
+        cout<<"按任意键继续......"<<endl;
+        cin.get();
+        cin.get();
+        return;
+    }
+    yearAnalysis(year);
+    cout<<"查询完毕，按任意键继续......"<<endl;
+    cin.get();
+    return;
 }
 #endif
