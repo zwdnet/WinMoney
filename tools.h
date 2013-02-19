@@ -1133,10 +1133,12 @@ void yearAnalysis(int year)
             num += IncomeData.getSumByType(beginTime,
                                                   endTime,
                                                   iter->first);
+            /*
             if (num < 0)
             {
                  num = -1.0*num;
             }
+            */
             TypeSum[j] += num;
             j++;
         }
@@ -1159,7 +1161,7 @@ void yearAnalysis(int year)
     stdBalance = stdData(BalanceSum);
     //3.计算统计数据。
     //恩格尔系数，食品消费除以总支出。
-    float engel = TypeSum[1]/TotalIncome;
+    float engel = fabs(TypeSum[1]/TotalIncome);
     //个人通货膨胀率，用下半年支出比上半年增长的比率来衡量
     float cpi = 0.0;
     float firstExpense = ExpenseSum[0] + ExpenseSum[1] + ExpenseSum[2]
@@ -1189,9 +1191,26 @@ void yearAnalysis(int year)
     cout<<"------------分类统计信息----------------"<<endl;
     int i = 0;
     map<int, string>::iterator iter;
+    //输出收入信息
+    cout<<"收入情况:"<<endl;
     for (iter = TypeName.begin(); iter != TypeName.end(); iter++)
     {
-        cout<<iter->second<<"金额 = "<<TypeSum[i]<<endl;
+        if (TypeSum[i] > 0)
+        {
+            cout<<iter->second<<" = "<<TypeSum[i]<<endl;
+        }
+        i++;
+    }
+    //输出支出情况
+    cout<<endl;
+    i = 0;
+    cout<<"支出情况:"<<endl;
+    for (iter = TypeName.begin(); iter != TypeName.end(); iter++)
+    {
+        if (TypeSum[i] < 0)
+        {
+            cout<<iter->second<<" = "<<-1*TypeSum[i]<<endl;
+        }
         i++;
     }
     cout<<"------------相关统计数据----------------"<<endl;
