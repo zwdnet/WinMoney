@@ -35,7 +35,7 @@ int main()
 			removeIncome();  //删除一项收入支出
 			break;
 		case 5:
-			searchIncomeByName(); //用项目名称检索收入支出记录
+			searchIncomeByType(); //用项目类型检索收入支出记录
 			break;
 		case 6:
 			searchIncomeByTime(); //用项目日期检索收入支出记录
@@ -47,7 +47,7 @@ int main()
 			removeInvestment();  //删除一项资产负债
 			break;
 		case 9:
-			searchInvestmentByName(); //用项目名称检索资产负债记录
+			searchInvestmentByType(); //用项目类型检索资产负债记录
 			break;
 		case 10:
 			searchInvestmentByTime(); //用项目日期检索资产负债记录

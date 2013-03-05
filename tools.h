@@ -22,8 +22,7 @@
 using namespace std;
 
 //公共函数的声明，不加的话下面使用时报错，说函数未定义，原因不知
-template <typename T>
-string num2str(T n);
+string num2str(long n);
 int str2int(string s);
 float str2float(string s);
 //声明结束
@@ -45,11 +44,11 @@ int getInput(void)
 		    <<"2.备份/恢复数据库................................"<<endl
 		    <<"3.增加一个收入/开支记录.........................."<<endl
 		    <<"4.删除一个收入/开支记录.........................."<<endl
-		    <<"5.用项目名称检索收入/开支记录...................."<<endl
+		    <<"5.用项目类型检索收入/开支记录...................."<<endl
 		    <<"6.用日期范围检索收入/开支记录...................."<<endl
 		    <<"7.增加一个投资/负债记录.........................."<<endl
 		    <<"8.删除一个投资/负债记录.........................."<<endl
-	            <<"9.用项目名称检索资产/负债记录...................."<<endl
+            <<"9.用项目类型检索资产/负债记录...................."<<endl
 		    <<"10.用日期范围检索资产/负债记录..................."<<endl
 		    <<"11.更改一个社保缴费记录.........................."<<endl
 		    <<"12.输出目前的社保状况............................"<<endl
@@ -379,17 +378,60 @@ void outputResult(const string & sql, const int which)
 	cin.get();
 }
 
-//用项目名称检索收入支出记录
-void searchIncomeByName(void)
+//用项目类型检索收入支出记录
+void searchIncomeByType(void)
 {
 	system("cls");
-	string name;
-	cout<<"用项目名称检索收入支出记录"<<endl;
-	cout<<"请输入要检索的项目名称:";
-	cin>>name;
-	string sql = "SELECT * FROM Income where Name like \"%";
-	sql += name;
-	sql += "%\";";
+	string typeName;
+	Income IncomeData;
+	cout<<"用项目类型名称检索收入支出记录"<<endl;
+	//输出现有的所有项目类型，供用户选择
+	string sql = "SELECT TypeID from IncomeType";
+	QueryResult res;
+	DataBase database;
+	database.runSQL(sql, res);
+	int i = 0;
+	int lastRes = 0;  //最大的类型ID，用来判断下面的输入是否越界
+	for (i = 1; i < res.row+1; i++)
+	{
+		//取得类型名称
+		string TypeName = IncomeData.getTypeName(str2int(res.result[i]));
+		cout<<res.result[i]<<"."<<TypeName<<endl;
+		lastRes = str2int(res.result[i]);
+	}
+	int option; //选择
+	cout<<"请输入项目类型代码:";
+	cin>>option;
+	if (option <= 0 || option > lastRes)
+	{
+		cout<<"输入错误!按任意键继续......"<<endl;
+		cin.get();
+		return;
+	}
+	else
+	{
+		typeName = IncomeData.getTypeName(str2int(res.result[option]));
+	}
+	long beginTime, endTime;
+	cout<<"请输入初始时间:";
+	cin>>beginTime;
+	cout<<"请输入结束时间:";
+	cin>>endTime;
+
+	if (!judgeTime(beginTime) || !judgeTime(endTime))
+	{
+		cout<<"输入的时间错误，必须在19800101到20991231之间，且为合法日期，按任意键继续";
+		cin.get();
+		cin.get();
+		return;
+	}
+	sql = "SELECT * FROM Income where TypeID = ";
+	sql += num2str(option);
+	sql += " and time >= ";
+	sql += num2str(beginTime);
+	sql += " and time <= ";
+	sql += num2str(endTime);
+	sql += ";";
 	outputResult(sql, 1);
 }
 
@@ -529,19 +571,96 @@ void removeInvestment(void)
 	return;
 }
 
-//用项目名称检索资产负债记录
-void searchInvestmentByName(void)
+//用项目类型检索资产负债记录
+void searchInvestmentByType(void)
 {
 	system("cls");
-	string name;
-	cout<<"用项目名称检索资产负债记录"<<endl;
-	cout<<"请输入要检索的项目名称:";
-	cin>>name;
-	string sql = "SELECT * FROM Investment where Name like \"%";
-	sql += name;
-	sql += "%\";";
+	string TypeName;
+	Investment InvestmentData;
+	cout<<"用项目类型名称检索资产负债记录"<<endl;
+	//输出现有的所有项目类型，供用户选择
+	string sql = "SELECT TypeID from InvestmentType";
+	QueryResult res;
+	DataBase database;
+	database.runSQL(sql, res);
+	int i = 0;
+	int lastRes = 0;  //最大的类型ID，用来判断下面的输入是否越界
+	for (i = 1; i < res.row+1; i++)
+	{
+		//取得类型名称
+		string TypeName = InvestmentData.getTypeName(str2int(res.result[i]));
+		cout<<res.result[i]<<"."<<TypeName<<endl;
+		lastRes = str2int(res.result[i]);
+	}
+	int option; //选择
+	cout<<"请输入项目类型代码:";
+	cin>>option;
+	if (option <= 0 || option > res.row+1)
+	{
+		cout<<"输入错误!按任意键继续......"<<endl;
+		cin.get();
+		return;
+	}
+	else
+	{
+		TypeName = InvestmentData.getTypeName(str2int(res.result[option]));
+	}
+	long beginTime, endTime;
+	cout<<"请输入初始时间:";
+	cin>>beginTime;
+	cout<<"请输入结束时间:";
+	cin>>endTime;
+
+	if (!judgeTime(beginTime) || !judgeTime(endTime))
+	{
+		cout<<"输入的时间错误，必须在19800101到20991231之间，且为合法日期，按任意键继续";
+		cin.get();
+		cin.get();
+		return;
+	}
+	sql = "SELECT * FROM Investment where TypeID = ";
+	sql += num2str(option);
+	sql += " and time >= ";
+	sql += num2str(beginTime);
+	sql += " and time <= ";
+	sql += num2str(endTime);
+	sql += ";";
 	outputResult(sql, 2);
 }
+
+/*
+//用项目日期范围检索收入支出记录
+void searchIncomeByTime(void)
+{
+	system("cls");
+	int beginTime, endTime;
+	cout<<"用项目日期检索投资负债记录"<<endl;
+	cout<<"请输入要检索的项目的日期范围"<<endl;
+	cout<<"起始时间:";
+	cin>>beginTime;
+	cout<<"结束时间:";
+	cin>>endTime;
+	if (!judgeTime(beginTime) || !judgeTime(endTime))
+	{
+		cout<<"输入的时间错误，必须在19800101到20991231之间，且为合法日期，按任意键继续";
+		cin.get();
+		cin.get();
+		return;
+	}
+	if (beginTime > endTime)
+	{
+		cout<<"输入的时间错误，结束日期必须不小于开始时间，按任意键继续";
+		cin.get();
+		cin.get();
+		return;
+	}
+	string sql = "SELECT * FROM Income where Time >= ";
+	sql += num2str(beginTime);
+	sql += " and Time <= ";
+	sql += num2str(endTime);
+	outputResult(sql, 2);
+}
+*/
 
 //用项目日期范围检索资产负债记录
 void searchInvestmentByTime(void)

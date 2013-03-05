@@ -16,8 +16,7 @@ using namespace std;
 
 //公共函数,照这里写的：http://blog.csdn.net/touzani/article/details/1623850
 //将整数转换为字符串
-template <typename T>
-string num2str(T n)
+string num2str(long n)
 {
 	stringstream ss;
 	ss<<n;

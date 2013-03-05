@@ -20,17 +20,17 @@
 	<cstdlib>
 	<iostream>
 
-1349406301 c:\users\administrator\code\winmoney\pubfun.h
+1362483768 c:\users\administrator\code\winmoney\pubfun.h
 	<iostream>
 	<string>
 
-1361181499 source:c:\users\administrator\code\winmoney\main.cpp
+1362484394 source:c:\users\administrator\code\winmoney\main.cpp
 	<iostream>
 	"database.h"
 	"datadeal.h"
 	"tools.h"
 
-1361271892 c:\users\administrator\code\winmoney\tools.h
+1362485855 c:\users\administrator\code\winmoney\tools.h
 	<iostream>
 	<string>
 	<limits>
