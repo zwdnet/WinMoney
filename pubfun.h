@@ -23,6 +23,13 @@ string num2str(long n)
 	return ss.str();
 }
 
+string money2str(float n)
+{
+    stringstream ss;
+	ss<<n;
+	return ss.str();
+}
+
 //将字符串转换为数字(整数)
 int str2int(string s)
 {

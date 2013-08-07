@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1349406278 source:c:\users\administrator\code\winmoney\datadeal.cpp
+1375873733 source:c:\users\administrator\code\winmoney\datadeal.cpp
 	"datadeal.h"
 	"pubfun.h"
 
@@ -20,7 +20,7 @@
 	<cstdlib>
 	<iostream>
 
-1362483768 c:\users\administrator\code\winmoney\pubfun.h
+1375874518 c:\users\administrator\code\winmoney\pubfun.h
 	<iostream>
 	<string>
 
@@ -30,7 +30,7 @@
 	"datadeal.h"
 	"tools.h"
 
-1362485855 c:\users\administrator\code\winmoney\tools.h
+1375874589 c:\users\administrator\code\winmoney\tools.h
 	<iostream>
 	<string>
 	<limits>

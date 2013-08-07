@@ -19,6 +19,8 @@
 #include "database.h"
 #include "datadeal.h"
 
+string money2str(float n);
+
 using namespace std;
 
 //公共函数的声明，不加的话下面使用时报错，说函数未定义，原因不知
@@ -747,13 +749,13 @@ void changeSocietyInsurance()
 	sql = "UPDATE SocietyInsurance Set Time = ";
 	sql += num2str(time);
 	sql += ", Old = ";
-	sql += num2str(old);
+	sql += money2str(old);
 	sql += ", Med = ";
-	sql += num2str(med);
+	sql += money2str(med);
 	sql += ", Job = ";
-	sql += num2str(job);
+	sql += money2str(job);
 	sql += ", House = ";
-	sql += num2str(house);
+	sql += money2str(house);
 	sql += ";";
 	if (!data.modifyDataBase(sql))
 	{

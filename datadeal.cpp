@@ -36,7 +36,7 @@ bool Income::setValue(Table & IncomeTable)
 	sql += " , \"";
 	sql += IncomeTable.name;
 	sql += "\" , ";
-	sql += num2str(IncomeTable.amount);
+	sql += money2str(IncomeTable.amount);
 	sql += " , ";
 	sql += num2str(IncomeTable.typeID);
 	sql += " , ";
@@ -276,7 +276,7 @@ bool Investment::setValue(Table & InvestmentTable)
 	sql += " , \"";
 	sql += InvestmentTable.name;
 	sql += "\" , ";
-	sql += num2str(InvestmentTable.amount);
+	sql += money2str(InvestmentTable.amount);
 	sql += " , ";
 	sql += num2str(InvestmentTable.typeID);
 	sql += " , ";
