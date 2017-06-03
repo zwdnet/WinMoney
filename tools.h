@@ -59,10 +59,11 @@ int getInput(void)
 		    <<"15.分析指定日期范围内的财务状况.................."<<endl
 		    <<"16.输出当前数据库中存储的记录的总数.............."<<endl
 		    <<"17.输出年度财务统计信息.........................."<<endl
-		    <<"18.退出.........................................."<<endl;
+		    <<"18.输出指定日期范围的税务统计信息................"<<endl
+		    <<"19.退出.........................................."<<endl;
 		cout<<"欢迎使用!请按提示输入选择:";
 		cin>>input;
-		if (input >= 1 && input <= 18)
+		if (input >= 1 && input <= 19)
 		{
 			break;
 		}
@@ -1364,5 +1365,143 @@ void yearStatics()
     cout<<"查询完毕，按任意键继续......"<<endl;
     cin.get();
     return;
+}
+
+//获取指定日期的税务信息
+void taxStatus(void)
+{
+    system("cls");
+	int beginTime, endTime;
+	cout<<"分析指定日期范围的财务状况"<<endl;
+	cout<<"请输入要检索的项目的日期范围"<<endl;
+	cout<<"起始时间:";
+	cin>>beginTime;
+	cout<<"结束时间:";
+	cin>>endTime;
+	if (!judgeTime(beginTime) || !judgeTime(endTime))
+	{
+		cout<<"输入的时间错误，必须在19800101到20991231之间，且为合法日期，按任意键继续";
+		cin.get();
+		cin.get();
+		return;
+	}
+	Income IncomeData;
+	//税率信息来自于:http://www.kuaiji.com/shiwu/3104963
+    vector<string> ZZS2;  //增值税税率2%的类别
+    vector<string> ZZS3;  //增值税税率3%的类别
+    vector<string> ZZS6;  //增值税税率6%的类别
+    ZZS6.push_back("交通");
+    ZZS6.push_back("法律咨询费");
+    ZZS6.push_back("金融成本");
+    ZZS6.push_back("保险");
+    ZZS6.push_back("物业费");
+    vector<string> ZZS11; //增值税税率11%的类别
+    ZZS11.push_back("通讯");
+    vector<string> ZZS13; //增值税税率13%的类别
+    ZZS13.push_back("饮食");
+    ZZS13.push_back("水电");
+    ZZS13.push_back("书刊消费");
+    vector<string> ZZS17; //增值税一般税率
+    ZZS17.push_back("职业发展");
+    ZZS17.push_back("人际开支");
+    ZZS17.push_back("社会活动");
+    ZZS17.push_back("日常用品");
+    ZZS17.push_back("婚恋成本");
+    ZZS17.push_back("旅行");
+    ZZS17.push_back("金融成本");
+    ZZS17.push_back("彩票");
+    ZZS17.push_back("大额消费");
+    ZZS17.push_back("亲情消费");
+    ZZS17.push_back("电子消费");
+    ZZS17.push_back("自行车爱好");
+    ZZS17.push_back("衣物");
+    ZZS17.push_back("学车支出");
+    ZZS17.push_back("文化消费");
+    ZZS17.push_back("学习支出");
+    string GFZC = "购房支出";      //购房支出的税费。
+    string WFFK = "违法罚款";      //违法罚款
+    string GRSDS = "纳税";         //个人所得税
+    float ZZS = 0.0; //增值税总数
+    //计算增值税
+    vector<string>::iterator iter;
+    float sum = 0.0;  //分税率税基
+    for (iter = ZZS6.begin(); iter != ZZS6.end(); iter++)
+    {
+        int ID = IncomeData.getTypeID(*iter);
+        if (ID != -1)
+        {
+            sum += IncomeData.getSumByType(beginTime, endTime, ID);
+        }
+    }
+    ZZS += sum*0.06;
+    sum = 0.0;
+
+    for (iter = ZZS11.begin(); iter != ZZS11.end(); iter++)
+    {
+        int ID = IncomeData.getTypeID(*iter);
+        if (ID != -1)
+        {
+            sum += IncomeData.getSumByType(beginTime, endTime, ID);
+        }
+    }
+    ZZS += sum*0.11;
+    sum = 0.0;
+
+    for (iter = ZZS13.begin(); iter != ZZS13.end(); iter++)
+    {
+        int ID = IncomeData.getTypeID(*iter);
+        if (ID != -1)
+        {
+            sum += IncomeData.getSumByType(beginTime, endTime, ID);
+        }
+    }
+    ZZS += sum*0.13;
+    sum = 0.0;
+
+    for (iter = ZZS17.begin(); iter != ZZS17.end(); iter++)
+    {
+        int ID = IncomeData.getTypeID(*iter);
+        if (ID != -1)
+        {
+            sum += IncomeData.getSumByType(beginTime, endTime, ID);
+        }
+    }
+    ZZS += sum*0.17;
+    sum = 0.0;
+
+    //计算城市建设维护税
+    float CSJSWHSE = ZZS*0.07;
+
+    //计算个人所得税
+    float GRSDSE = IncomeData.getSumByType(beginTime, endTime, IncomeData.getTypeID(GRSDS));
+
+    //计算购房税费等
+    float GFSFE = IncomeData.getSumByType(beginTime, endTime, IncomeData.getTypeID(GFZC));
+
+    //计算违法罚款
+    float WFFKE = IncomeData.getSumByType(beginTime, endTime, IncomeData.getTypeID(WFFK));
+
+    //缴纳的税费总额
+    float Total = abs(ZZS + CSJSWHSE + GRSDSE + GFSFE + WFFKE);
+
+    //计算时间范围内的收入总额
+    float TotalIncome = IncomeData.getSumIncome(beginTime, endTime);
+
+    //计算统计数据
+    //收入税负率
+    float taxPercent = Total/TotalIncome*100;
+
+    //输出数据
+    cout<<"您在"<<beginTime<<"至"<<endTime<<"期间的税负情况:"<<endl;
+    cout<<"税负总额为:"<<Total<<endl;
+    cout<<"增值税:"<<abs(ZZS)<<"             占总税费比例"<<abs(ZZS)/Total*100<<"%"<<endl;
+    cout<<"个人所得税:"<<abs(GRSDSE)<<"           占总税费比例"<<abs(GRSDSE)/Total*100<<"%"<<endl;
+    cout<<"城市建设维护税:"<<abs(CSJSWHSE)<<"     占总税费比例"<<abs(CSJSWHSE)/Total*100<<"%"<<endl;
+    cout<<"购房支出"<<abs(GFSFE)<<"                 占总税费比例"<<abs(GFSFE)/Total*100<<"%"<<endl;
+    cout<<"违法罚款"<<abs(WFFKE)<<"                占总税费比例"<<abs(WFFKE)/Total*100<<"%"<<endl;
+    cout<<"您的收入税负率:"<<Total/TotalIncome*100<<"%"<<endl;
+    cout<<"按任意键继续......."<<endl;
+    cin.get();
+    cin.get();
 }
 #endif

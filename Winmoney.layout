@@ -1,25 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
+	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Release" />
-	<File name="database.cpp" open="1" top="0" tabpos="3">
-		<Cursor position="5558" topLine="228" />
+	<File name="datadeal.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3561" topLine="157" />
+		</Cursor>
 	</File>
-	<File name="database.h" open="1" top="0" tabpos="1">
-		<Cursor position="1345" topLine="42" />
+	<File name="database.h" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="32" />
+		</Cursor>
 	</File>
-	<File name="datadeal.cpp" open="1" top="0" tabpos="6">
-		<Cursor position="0" topLine="0" />
+	<File name="tools.h" open="1" top="1" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="43014" topLine="1466" />
+		</Cursor>
 	</File>
-	<File name="datadeal.h" open="1" top="0" tabpos="2">
-		<Cursor position="854" topLine="41" />
+	<File name="datadeal.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3332" topLine="74" />
+		</Cursor>
 	</File>
-	<File name="main.cpp" open="1" top="0" tabpos="7">
-		<Cursor position="689" topLine="20" />
+	<File name="main.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="368" topLine="45" />
+		</Cursor>
 	</File>
-	<File name="pubfun.h" open="1" top="0" tabpos="4">
-		<Cursor position="382" topLine="11" />
+	<File name="pubfun.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="451" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="tools.h" open="1" top="1" tabpos="5">
-		<Cursor position="8919" topLine="352" />
+	<File name="database.cpp" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="229" topLine="0" />
+		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

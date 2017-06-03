@@ -61,6 +61,8 @@ public:
 	//获取从beginTime到endTime时段内数据库特定类型项目的金额总和
 	float getSumByType(const int & beginTime, const int endTime,
 			   const int & typeID);
+    //获取从beginTime到endTime时段内数据库所有税赋及费用的总和
+    float getSumTax(const int & beginTime, const int endTime);
 
 private:
 	float Sum(const string & sql); //查询总数的函数,供各个成员函数调用，其它get*函数

@@ -157,7 +157,7 @@ float Income::Sum(const string & sql)
 	{
 		sum += str2float(res.result[i]);
 	}
-	return sum;
+    return sum;
 }
 
 //获取数据库中所有收入支出的总和，看余额多少
@@ -238,6 +238,12 @@ float Income::getSumByType(const int & beginTime, const int endTime,
 	sql += num2str(TypeID);
 	sql += ";";
 	return Sum(sql);
+}
+
+//计算从beginTime到endTime时段的税赋费用总和
+float Income::getSumTax(const int & beginTime, const int endTime)
+{
+    return 0.0;
 }
 
 /********************************************/

@@ -17,7 +17,7 @@ int main()
 {
 	DataBase money; //数据库类
 	int input = 0;
-	while (input != 18)
+	while (input != 19)
 	{
 		input = getInput();
 		switch (input)
@@ -73,6 +73,8 @@ int main()
         case 17:
             yearStatics(); //输出年度统计信息
             break;
+        case 18:
+            taxStatus(); //输出指定日期范围内的税务信息。
 		default:
 			break;
 		}
