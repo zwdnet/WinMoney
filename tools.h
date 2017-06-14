@@ -413,7 +413,15 @@ void searchIncomeByType(void)
 	}
 	else
 	{
-		typeName = IncomeData.getTypeName(str2int(res.result[option]));
+	    for (i = 1; i < res.row+1; i++)
+        {
+            int nowID = str2int(res.result[i]);
+            if (nowID == option)
+            {
+                typeName = IncomeData.getTypeName(str2int(res.result[i]));
+                break;
+            }
+        }
 	}
 	long beginTime, endTime;
 	cout<<"请输入初始时间:";
